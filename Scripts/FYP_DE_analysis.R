@@ -275,7 +275,9 @@ Fe_df =  DE_genes %>%
 write.csv(Fe_df, file = file.path(resdir, "Fe_acq_genes.csv"), row.names = F)
 
 
-#  3. KEGG analysis May 2020 ----
+#  4. KEGG analysis May 2020 ----
+
+resdir. = file.path(resdir_parent, "KEGG"); if(!dir.exists(resdir.)) dir.create(resdir.)
 
 # KEGG pathway enrichment analysis
 KEGG_df = DE_KEGG %>% dplyr::select(locus_tag, KEGG_pthwy_grp) %>% filter(!is.na(KEGG_pthwy_grp)) %>% distinct()
