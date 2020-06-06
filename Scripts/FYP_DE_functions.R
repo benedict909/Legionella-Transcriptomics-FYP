@@ -151,53 +151,6 @@ plot_foldchange = function(input = NULL, gene_col = NULL, fill_col = NULL, fold_
 
 
 
-
-# # run BLAST in R 
-# blastSeqKK <- function (x, database = "nr", hitListSize = "10", 
-#                         filter = "L", expect = "10", program = "blastn",
-#                         attempts = 10) {
-#   baseUrl <- "http://www.ncbi.nlm.nih.gov/blast/Blast.cgi"
-#   query <- paste("QUERY=", as.character(x), "&DATABASE=", database, 
-#                  "&HITLIST_SIZE=", hitListSize, "&FILTER=", filter, "&EXPECT=", 
-#                  expect, "&PROGRAM=", program, sep = "")
-#   url0 <- sprintf("%s?%s&CMD=Put", baseUrl, query)
-#   results <- tempfile()
-#   Sys.sleep(5)
-#   require(XML)
-#   post <- htmlTreeParse(url0, useInternalNodes = TRUE)
-#   x <- post[["string(//comment()[contains(., \"QBlastInfoBegin\")])"]]
-#   rid <- sub(".*RID = ([[:alnum:]]+).*", "\\1", x)
-#   rtoe <- as.integer(sub(".*RTOE = ([[:digit:]]+).*", "\\1", 
-#                          x))
-#   url1 <- sprintf("%s?RID=%s&FORMAT_TYPE=XML&CMD=Get", baseUrl, 
-#                   rid)
-#   Sys.sleep(rtoe)
-#   .tryParseResult <- function(url, attempts){
-#     for (i in 1:(attempts+1)) {
-#       result <- tryCatch({
-#         xmlTreeParse(url, useInternalNodes=TRUE,
-#                      error = xmlErrorCumulator(immediate=FALSE))
-#       }, error=function(err) NULL)
-#       if (!is.null(result)) return(result)
-#       Sys.sleep(10)
-#     }
-#     stop(paste("no results after ", attempts, 
-#                " attempts; please try again later", sep = ""))
-#   }
-#   result <- .tryParseResult(url1, attempts)
-#   qseq <- xpathApply(result, "//Hsp_qseq", xmlValue)
-#   hseq <- xpathApply(result, "//Hsp_hseq", xmlValue)
-#   require(Biostrings)
-#   res <- list()
-#   for (i in seq_len(length(qseq))) {
-#     res[i] <- DNAMultipleAlignment(c(hseq[[i]], qseq[[i]]), 
-#                                    rowmask = as(IRanges(), "NormalIRanges"), colmask = as(IRanges(), 
-#                                                                                           "NormalIRanges"))
-#   }
-# }
-
-
-
 # cosine distance function, taken from the package Palimpsest: https://github.com/FunGeST/Palimpsest 
 # method adapted from Shinde et al. (2018) Bioinformatics & Letouzé et al. (2017) Nat. Comms. 
 

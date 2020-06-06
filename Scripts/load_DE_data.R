@@ -1,4 +1,5 @@
 # Final year project data load & process February 2020
+# Load DE data and add KEGG annotations
 
 library(tidyverse)
 library(gdata)
@@ -210,8 +211,8 @@ DE_KEGG = DE_genes %>%
 
 ## add pathway "groups" (from "kegg_pathways_lists.R")
 
-load(file.path(datadir,"KEGG_pathway_lists_concat/general_pthwys_list.RData"))
-load(file.path(datadir,"KEGG_pathway_lists_concat/pthwys_list.RData"))
+load(file.path(datadir,"general_pthwys_list.RData"))
+load(file.path(datadir,"pthwys_list.RData"))
 
 
 DE_KEGG$KEGG_pthwy_grp = NA

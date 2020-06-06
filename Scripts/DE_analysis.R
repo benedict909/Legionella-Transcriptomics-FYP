@@ -1,4 +1,5 @@
 # Final year project data analysis May 2020
+# RNA-Seq DE analysis of Legionella pneumophila in response to sources of environmental stress
 
 source('C:/Users/bened/Dropbox/Final_Year/Project/Scripts/FYP_DE_functions.R') # path to source script
 
@@ -273,93 +274,8 @@ Fe_df =  DE_genes %>%
 
 write.csv(Fe_df, file = file.path(resdir, "Fe_acq_genes.csv"), row.names = F)
 
-#  3. Old KEGG analysis -----------------------------------------------------------------------------------
-# 
-# ## 1. graphs for all KEGG pathways
-# 
-# resdir. = file.path(resdir_parent, "KEGG"); if(!dir.exists(resdir.)) dir.create(resdir.)
-# resdir = file.path(resdir., "KEGG_pathways"); if(!dir.exists(resdir)) dir.create(resdir)
-# 
-# 
-# pathways = unique(DE_KEGG$KEGG_set[!is.na(DE_KEGG$KEGG_set)]) %>% sort()
-# input = plot_nchanges_input(paths = pathways, input_df = DE_KEGG, input_path_col = "KEGG_set",
-#                                conditions = conditions_list)
-# table(input$cond)
-# 
-# plot_nchanges(input = input, resdir = resdir, conditions_list = conditions_list,
-#                             y_colname = "value", x_colname = "pathway", fill_colname = "variable",
-#                             proportion = TRUE, filename = "_Kegg_pathways")
-# 
-# 
-# ## 2. general pathways graphs 
-# resdir = file.path(resdir., "general_pathways"); if(!dir.exists(resdir)) dir.create(resdir)
-# 
-# input_gen= plot_nchanges_input(paths = general_pthwys_list, input_df = DE_KEGG,
-#                                input_path_col = "KEGG_pthwy_general_grp", conditions = conditions_list)
-# table(input_gen$cond)
-# plot_nchanges(input = input_gen, resdir = resdir, conditions_list = conditions_list,
-#                  y_colname = "value", x_colname = "pathway", fill_colname = "variable",
-#                  proportion = TRUE, filename = "_Kegg_general_pathways")
-# 
-# 
-# 
-# ## 3. specific pathways graphs 
-# resdir = file.path(resdir., "specific_pathways"); if(!dir.exists(resdir)) dir.create(resdir)
-# 
-# input_spec = plot_nchanges_input(paths = general_pthwys_list, input_df = DE_KEGG,
-#                                   input_path_col = "KEGG_pthwy_grp", conditions = conditions_list)
-# table(input_spec$cond)
-# plot_nchanges(input = input_spec, resdir = resdir, conditions_list = conditions_list,
-#                  y_colname = "value", x_colname = "pathway", fill_colname = "variable",
-#                  proportion = TRUE, filename = "_Kegg_specific_pathways")
-# 
-# 
-# ## 4. poster figure
-# 
-# input = plot_nchanges_input(paths = general_pthwys_list, input_df = DE_KEGG,
-#                                input_path_col = "KEGG_pthwy_general_grp", conditions = conditions_list) %>% 
-#   filter(pathway == "Metabolism",
-#          variable != "non-DE") %>% 
-#   group_by(cond) %>% 
-#   mutate(tot = sum(value),
-#          variable = ifelse(variable == "up","upregulated","downregulated"),
-#          variable = factor(variable, levels = c("upregulated","downregulated"))) %>%
-#   ungroup() %>% 
-#   arrange(tot,desc(variable) ) %>% 
-#   mutate(cond = ifelse(cond == "Oss","Os",cond),
-#          cond = ifelse(cond == "Oxs","Ox",cond),
-#          cond = ifelse(cond == "Mig","Mg",cond),
-#          perc = prop * 100)
-# 
-# input$skew = NA; input$skewness = NA  ## order bar graph in desc order of up:down regulation
-# for(group in unique(input$cond)){
-#   prop1 = (filter(input, variable == "upregulated" & cond == group) %>% pull(prop)) + 1e-10
-#   prop2 = filter(input, variable == "downregulated" & cond == group) %>% pull(prop) + 1e-10
-#   input$skew[input$cond == group] = ifelse(prop1>prop2, "up","down") 
-#   input$skewness[input$cond == group] = as.numeric(max(c(prop1,prop2)))
-# }  
-# myorder = input %>% mutate(skewness = ifelse(skew == "down",-skewness,skewness)) %>%
-#   arrange(skewness) %>% pull(cond) %>% unique()
-# 
-# png(file = file.path(resdir.,"metabolism_bar.png"), height = 1000, width = 1000, res = 400)
-# ggplot() +
-#   geom_bar(mapping = aes(x = factor(input$cond, levels = myorder),
-#                          y =  input$perc, fill = factor(input$variable, levels = c("downregulated","upregulated"))),
-#            stat = "identity", position = "dodge", width = 0.75) +
-#   scale_fill_manual(values = mycol) +
-#   #ggtitle(paste("stress condition:",condition)) + 
-#   xlab("Condition") + ylab("Percentage of metabolic genes") + 
-#   scale_y_continuous(expand = expansion(mult = c(0,0), add = 0), limits = c(0,50),breaks = c(0,25,50)) +
-#   theme_bw() + coord_flip() +
-#   theme(axis.text.x = element_text(angle = 0, size = 10, hjust = 0.5, vjust = 0.5), panel.border = element_blank(),
-#         axis.line = element_line(), axis.title.x = element_text(size = 10),
-#         panel.grid = element_blank(), #plot.margin=unit(c(0,.35,0,0),"cm"), # order = top, right, bottom, left (/never eat shredded wheat)
-#         #legend.title = element_blank(), panel.background = element_blank())
-#         legend.position = "none")
-# dev.off()
-# 
 
-#  4. KEGG analysis May 2020 ----
+#  3. KEGG analysis May 2020 ----
 
 # KEGG pathway enrichment analysis
 KEGG_df = DE_KEGG %>% dplyr::select(locus_tag, KEGG_pthwy_grp) %>% filter(!is.na(KEGG_pthwy_grp)) %>% distinct()
@@ -460,6 +376,28 @@ input %>% filter(grepl("Energy",pathway)) %>% dplyr::select(-c(general_pth)) %>%
 
 resdir = file.path(resdir_parent,"clustering_may"); if(!file.exists(resdir)) dir.create(resdir)
 
+
+# Load Dot/Icm effector locus tag names
+fastafiles = list.files(file.path(datadir,"BLAST_results_cl"))
+blacklist = c("lpg0076.fasta_result", "lpg0364.fasta_result", "lpg0406.fasta_result", "lpg0634.fasta_result",
+              "lpg1496.fasta_result","lpg1683.fasta_result", "lpg2400.fasta_result", "lpg2765.fasta_result", "lpg2867.fasta_result")
+fastafiles = fastafiles[-which(fastafiles %in% blacklist)]
+
+fasta_con_all = NA
+for(eff in fastafiles){
+  print(eff)
+  tmp_fasta = read.table(file.path(datadir,"BLAST_results_cl",eff), sep = "\t")
+  if(all(is.na(fasta_con_all))){
+    fasta_con_all = tmp_fasta
+  }else{
+    fasta_con_all = rbind(fasta_con_all, tmp_fasta)
+  }
+}
+colnames(fasta_con_all) = unlist(strsplit("qseqid sseqid sacc ssciname stitle pident length mismatch gapopen qstart qend sstart send evalue bitscore"," "))
+
+newloci = c()
+load(file.path(datadir, "T4SS_effectors.RData"))
+
 fastafiles = list.files(file.path(datadir,"BLAST_results_cl"))
 blacklist = c("lpg0076.fasta_result", "lpg0364.fasta_result", "lpg0406.fasta_result", "lpg0634.fasta_result",
               "lpg1496.fasta_result","lpg1683.fasta_result", "lpg2400.fasta_result", "lpg2765.fasta_result", "lpg2867.fasta_result")
@@ -481,6 +419,14 @@ newloci = c()
 load(file.path(datadir, "T4SS_effectors.RData"))
 effectors_loci = c(unlist(strsplit(as.character(effectors_df$L..pneumophila), " ")), newloci); length(effectors_loci)
 
+
+blast_eff = fasta_con_all %>% 
+  select(locus_tag = qseqid, blast_result  = stitle) %>% 
+  distinct() %>% 
+  filter(grepl("Dot", blast_result)) %>% 
+  mutate(new = ifelse(locus_tag %in% effectors_loci, FALSE, TRUE))
+
+newloci = unique(as.character(blast_eff$locus_tag[blast_eff$new == TRUE]))
 
 blast_eff = fasta_con_all %>% 
   select(locus_tag = qseqid, blast_result  = stitle) %>% 
@@ -533,7 +479,7 @@ row_ha = rowAnnotation(T4SS_eff. = eff_presence, T4SS = T4SS_presence,
 
 # heatmap colour function, change num range to change where colour is max
 # col_fun = colorRamp2(c(-2,-0.4, 0,0.4, 2), c("blue3","white", "white","white", "firebrick3"))
-col_fun = colorRamp2(c(-2, 0, 2), c("blue3","white", "firebrick3"))
+# col_fun = colorRamp2(c(-2, 0, 2), c("blue3","white", "firebrick3"))
 col_fun2 = colorRamp2(c(-2,-0.4, 0,0.4, 2), c("blue3","white", "white","white", "firebrick3"))
 
 
@@ -924,13 +870,7 @@ doticm_df = DE_genes %>%
   column_to_rownames("locus_tag") %>% 
   t() %>% as.data.frame()
 
-# DE_genes %>% 
-#   filter(locus_tag %in% T4SS_loci) %>% 
-#   select(locus_tag, all_of(foldchanges)) %>%
-#   select(-c("As_log2FC", "Os_log2FC","Tm_log2FC")) %>% 
-#   column_to_rownames("locus_tag") %>% 
-#   t() %>% as.data.frame() %>% summarise(m = mean(.))
-# splitstackshape::expandRows(doticm_df, "n_up")
+
 
 doticm_df$n_up = NA; doticm_df$n_dn = NA
 for(i in 1:nrow(doticm_df)){
@@ -977,22 +917,6 @@ resdir = file.path(resdir_parent,"differentiation_control"); if(!file.exists(res
 sigma_loci = c("lpg0477", "lpg1284","lpg1577", "lpg1762", "lpg1782", "lpg2361", "lpg2667")
 names(sigma_loci) = c("sigma 54", "rpoS", "rpoE", "fleR", "fliA", "rpoD", "rpoH")
 sigma_loci = data.frame(sigma_loci) %>% rownames_to_column(var = "gene") %>% rename(locus_tag = sigma_loci)
-# 
-# diff_input = allgenes_folds %>% 
-#   select(-c("As","Os","Tm")) %>% 
-#   rownames_to_column(var = "locus_tag") %>% 
-#   filter(locus_tag %in% sigma_loci$locus_tag) %>% 
-#   reshape2::melt() %>% 
-#   left_join(sigma_loci)
-# 
-# ggplot(diff_input, aes(x = factor(variable), y = value)) + 
-#   geom_segment(aes(0, log2(1.5), xend=2, yend=log2(1.5)), linetype = "dashed", colour = "grey48") + 
-#   geom_segment(aes(0, -log2(1.5), xend=2, yend=-log2(1.5)), linetype = "dashed", colour = "grey48") + 
-#   scale_x_discrete() + 
-#   geom_jitter(aes(colour = gene), size  = 3, height = 0, width = .2) + 
-#   facet_grid(.~diff_input$variable, scales = "free", space = "free_y") +
-#   theme_bw() + xlab("Stress condition") + ylab("log2(FC)")+
-#   theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 
 
 sigma_loci = c("lpg0477", "lpg1284","lpg1577", "lpg0853", "lpg2361", "lpg2667", "lpg1782")
@@ -1010,19 +934,6 @@ sigma_input = allgenes_folds %>%
   left_join(sigma_loci) %>% 
   left_join(sigcol) %>% mutate(sigcol_list = as.character(sigcol_list), gene = factor(gene))
 
-ggplot(sigma_input) + 
-  geom_segment(aes(0,  log2(1.5), xend=2, yend=log2(1.5)), linetype = "dashed", colour = "grey48") + 
-  geom_segment(aes(0, -log2(1.5), xend=2, yend=-log2(1.5)), linetype = "dashed", colour = "grey48") + 
-  scale_x_discrete() + 
-  # geom_jitter(colour = sigma_input$sigcol_list,#colour = sigma_input$sigcol_list, 
-  #             size  = 4, height = 0, width = 0.5, show.legend = T) + 
-  geom_jitter(aes(x = condition, y = value, colour = gene),  
-              size  = 4, height = 0.1, width = 0.3, show.legend = T) + 
-  scale_colour_manual(values = c("darkorchid1", "darkturquoise", "grey70", "orangered1", "darkred", "goldenrod1", "darkolivegreen3")) +
-  facet_grid(.~variable, scales = "free", space = "free_y", switch = "both") +
-  theme_bw() + xlab("Stress condition") + ylab("log2(FC)")+ 
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()
-        )
 
 
 
@@ -1045,16 +956,6 @@ diff_input = allgenes_folds %>%
   left_join(diff_loci)
 # library(jcolors)
 
-ggplot(diff_input, aes(x = factor(variable), y = value)) + 
-  geom_segment(aes(0, log2(1.5), xend=2, yend=log2(1.5)), linetype = "dashed", colour = "grey48") + 
-  geom_segment(aes(0, -log2(1.5), xend=2, yend=-log2(1.5)), linetype = "dashed", colour = "grey48") + 
-  scale_x_discrete() + 
-  geom_jitter(aes(colour = gene), size  = 4, height = 0, width = .2) + 
-  scale_colour_manual(values = c("darkgreen", "darkturquoise", "grey", "orangered1", "darkred",
-                                 "goldenrod1", "deeppink4","royalblue4", "hotpink3","darkolivegreen3","bisque","steelblue1", "olivedrab")) +
-  facet_grid(.~variable, scales = "free", space = "free_y", switch = "both") +
-  theme_bw() + xlab("Stress condition") + ylab("log2(FC)")+
-  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
 
 hm_genes = rbind(sigma_loci, diff_loci)
 
@@ -1210,276 +1111,3 @@ ggplot(metmeans, aes(y = mean_met, x = RpoD, colour = Stress.condition)) +
 dev.off()
 
 cor.test(metmeans$mean_met, metmeans$RpoD, method = "pearson")
-
-
-
-
-# 12. hypothetical genes ----
-
-hypot_loci = DE_genes %>%
-  filter(product == "hypothetical protein") %>% pull(locus_tag)
-
-hypoth = allgenes_folds %>% 
-  rownames_to_column("locus_tag") %>% 
-  filter(locus_tag %in% hypot_loci) %>% 
-  mutate(n_hi = NA)
-
-for(i in 1:nrow(hypoth)){
-  currentfolds = abs(hypoth[i,2:10])
-  # print(length(which(currentfolds >= 2)))
-  hypoth[i,"n_hi"] = length(which(currentfolds >= 2))
-}
-
-# T4SS DE analysis --------------------------------------------------------------------------------
-# 
-
-
-# 
-# resdir_uncle = file.path(resdir_parent, "T4SS"); if(!dir.exists(resdir_uncle)) dir.create(resdir_uncle)
-# 
-# load(file.path(datadir, "T4SS_genes.RData"))
-# additional_loci = c("lpg0525", "lpg0472") #lphA = icmN, lpg0525 = LvgA, lpg0472 = dotV
-# 
-# DE_T4SS = DE_KEGG %>% 
-#   filter(gene %in% T4SS_genes | locus_tag %in% additional_loci) %>% 
-#   mutate(KO_description_number = paste0(formatC(c(1:nrow(.)), flag=0, width=2),". ", KO_description)) %>% 
-#   mutate(KO_description_number = ifelse(locus_tag == "lpg0525", 
-#                                         gsub("hypothetical protein","LvgA",KO_description_number), 
-#                                         KO_description_number),
-#          KO_description_number = ifelse(locus_tag == "lpg0472", 
-#                                         gsub("IcmC","DotV",KO_description_number), 
-#                                         KO_description_number),
-#          KO_description_number = ifelse(gene == "lphA", 
-#                                         gsub("LphA","IcmN",KO_description_number), 
-#                                         KO_description_number)) 
-# 
-# # plot
-# resdir = file.path(resdir_uncle, "T4SS_proteins"); if(!dir.exists(resdir)) dir.create(resdir)
-# for(condition in conditions_list){
-#   print(condition)
-# 
-#   pdf(file = file.path(resdir,paste0(condition,"_T4SS_proteins_DE.pdf")), width = 15, height = 7)
-#   plot_foldchange(input = DE_T4SS, gene_col = "KO_description_number",
-#                   fold_col = paste0(condition,fold_suffix), fill_col = paste0(condition,"_change"))
-#   dev.off()
-# }
-# 
-# 
-# # effectors 
-# load(file.path(datadir, "T4SS_effectors.RData"))
-# 
-# effectors_loci = unlist(strsplit(as.character(effectors_df$L..pneumophila), " "))
-# table(effectors_loci %in% DE_genes$locus_tag) # want all to be true 
-# table(is.na(DE_KEGG$KO_description[DE_KEGG$locus_tag %in% effectors_loci])) # want all to be false 
-# 
-# DE_effectors = DE_genes %>% 
-#   filter(locus_tag %in% effectors_loci) %>% 
-#   mutate(product_num = paste0(formatC(c(1:nrow(.)), flag=0, width=2),". ", product)) 
-#   
-# 
-# resdir = file.path(resdir_uncle, "T4SS_effectors"); if(!dir.exists(resdir)) dir.create(resdir)
-# for(condition in conditions_list){
-#   print(condition)
-# 
-#   pdf(file = file.path(resdir,paste0(condition,"_T4SS_effectors_DE.pdf")), width = 15, height = 7)
-#   plot_foldchange(input = DE_effectors, gene_col = "product_num",
-#                   fold_col = paste0(condition,fold_suffix), fill_col = paste0(condition,"_change"))
-#   dev.off()
-# }
-
-
-# Other ----
-
-
-# pyomelanin
-# 
-# pyogenes = c("hisC2", "phhA", "hmgA")
-# changecols = colnames(DE_genes)[grepl("_change", colnames(DE_genes))]
-# DE_genes %>% filter(gene %in% pyogenes) %>% dplyr::select(gene, changecols)
-
-
-# T2SS --------------------------------------------------------------------------------------------
-# resdir = file.path(resdir_parent, "T2SS"); if(!dir.exists(resdir)) dir.create(resdir)
-# 
-# T2SS_effectors = c("lpg0467","lpg1119","lpg2848","lpg2343","lpg2814","lpg1244","lpg1116","lpg2689",
-#                    "lpg0189","lpg1809","lpg1832","lpg0264","lpg2999","lpg1918","lpg0956","lpg2644",
-#                    "lpg0873","lpg1690","lpg2025","lpg1340","lpg2622","lpg0406","lpg2526","lpg0032",
-#                    "lpg1954","lpg1385")
-# 
-# T2SS_proteins = DE_KEGG %>% 
-#   filter(grepl("General secretion pathway protein", KO_description)) %>% pull(locus_tag)
-# 
-# DE_T2SS = DE_KEGG %>% 
-#   filter(locus_tag %in% T2SS_proteins)
-# 
-# # T2SS plot proteins 
-# resdir. = file.path(resdir, "T2SS_proteins"); if(!dir.exists(resdir.)) dir.create(resdir.)
-# for(condition in conditions_list){
-#   print(condition)
-#   
-#   pdf(file = file.path(resdir.,paste0(condition,"_T2SS_proteins_DE.pdf")), width = 15, height = 7)
-#   plot_foldchange(input = DE_T2SS, gene_col = "KO_description",
-#                   fold_col = paste0(condition,fold_suffix), fill_col = paste0(condition,"_change"))
-#   dev.off()
-# }
-# 
-# # T2SS plot effectors 
-# DE_T2SS_eff = DE_genes %>% 
-#   filter(locus_tag %in% T2SS_effectors) %>% 
-#   mutate(gene_num = paste0(formatC(c(1:nrow(.)), flag=0, width=2),". ", KO_description)) 
-# 
-# resdir. = file.path(resdir, "T2SS_effectors"); if(!dir.exists(resdir.)) dir.create(resdir.)
-# for(condition in conditions_list){
-#   print(condition)
-#   
-#   pdf(file = file.path(resdir.,paste0(condition,"_T2SS_effectors_DE.pdf")), width = 15, height = 7)
-#   plot_foldchange(input = DE_T2SS_eff, gene_col = "locus_tag", fold_col = paste0(condition,fold_suffix),
-#                   fill_col = paste0(condition,"_change"))
-#   dev.off()
-# }
-
-
-
-
-# Heatmaps  ----
-# library(superheat)
-# 
-# resdir = file.path(resdir_parent,"clustering"); if(!file.exists(resdir)) dir.create(resdir)
-# 
-# T4SS_hm = DE_T4SS %>% 
-#   mutate(gene = as.character(gene)) %>% 
-#   mutate(gene = ifelse(locus_tag == "lpg0472", "DotV", gene),
-#          gene = ifelse(locus_tag == "lpg0525", "LvgA", gene)) %>% 
-#   dplyr::select(gene, all_of(foldchanges)) %>% 
-#   arrange(gene) %>% 
-#   column_to_rownames("gene")
-# 
-# colnames(T4SS_hm) = conditions_list
-# 
-# T4SS_hm_na = T4SS_hm
-# T4SS_hm_na[T4SS_hm_na < 1.5 & T4SS_hm_na > -1.5] = 0
-# table(is.na(T4SS_hm_na))
-# 
-#         
-# rang = max(T4SS_hm) - min(T4SS_hm)
-# zero = abs(min(T4SS_hm) / rang)
-# 
-# convert = function(x, df){
-#   smol = abs(min(df))
-#   big = max(df) + smol
-#   x = x + smol
-#   x = x / big
-#   return(x)
-# }
-# 
-# x= round(min(T4SS_hm) / max(T4SS_hm),digits = 2)
-# myseq = seq(-1,1,0.05)
-# 
-# 
-# col = colorRampPalette(c("blue", "white", "red")) 
-# ncol = 41
-# my_col = col(ncol); names(my_col) = myseq
-# 
-# mincol = as.character(my_col[names(my_col) == myseq[findInterval(x, myseq)]]) #find closest value with findInterval
-# 
-# superheat((T4SS_hm), 
-#           row.dendrogram = T, col.dendrogram = T, 
-#           pretty.order.cols = T, pretty.order.rows = T,
-#           clustering.method = "hierarchical", dist.method = "euclidean",
-#           left.label = "variable",
-#           heat.pal = c("blue", "white","white","white","red"), heat.pal.values = c(0,convert(-1, T4SS_hm),
-#                                                                           convert(0, T4SS_hm),convert(1, T4SS_hm),1))
-# 
-# #pdf(file = file.path(resdir,"T4SS_clust.pdf"), height = 10, width = 8)
-# superheat((T4SS_hm_na), 
-#           #row.dendrogram = T,pretty.order.rows = T, 
-#           pretty.order.cols = T, col.dendrogram = T,
-#           clustering.method = "hierarchical",
-#           left.label = "variable",
-#           heat.pal = c(mincol, "white","red"), heat.pal.values = c(0,convert(0),1), 
-#           heat.na.col = "white")
-# #dev.off()
-# 
-# 
-# 
-# 
-# 
-# 
-# effectors_hm = DE_effectors %>% 
-#   mutate(gene = as.character(locus_tag)) %>% 
-#   # mutate(gene = ifelse(locus_tag == "lpg0472", "DotV", gene),
-#   #        gene = ifelse(locus_tag == "lpg0525", "LvgA", gene)) %>% 
-#   dplyr::select(gene, all_of(foldchanges)) %>% 
-#   arrange(gene) %>% 
-#   column_to_rownames("gene")
-#   
-# 
-# 
-# colnames(effectors_hm) = c("As","Li","Mg","Nd","Ns","Os","Ox","Sp","Tm" )
-# 
-# # T4SS_hm_na = T4SS_hm
-# # T4SS_hm_na[T4SS_hm_na < 1.5 & T4SS_hm_na > -1.5] = 0
-# # table(is.na(T4SS_hm_na))
-# 
-# png(file = file.path(resdir,"effectors_clust.png"), height = 500, width = 400, res = 90)
-# superheat((effectors_hm), 
-#           pretty.order.rows = T, #row.dendrogram = T, 
-#           pretty.order.cols = T, col.dendrogram = T,
-#           clustering.method = "hierarchical",
-#           left.label = "variable",
-#           legend.breaks = c(seq(-5,5,5),seq(15,60,15)),
-#           heat.pal = c("blue", "white","red","red"), heat.pal.values = c(0,0.1,0.2,1), 
-#           heat.na.col = "white")
-# dev.off()
-# 
-# png(file = file.path(resdir,"effectors_clust_big.png"), height = 5000, width = 4000, res = 100)
-# clustering = superheat((effectors_hm),pretty.order.rows = T, row.dendrogram = T,
-#                        pretty.order.cols = T, col.dendrogram = T,clustering.method = "hierarchical", force.left.label = TRUE,
-#                        left.label = "variable", left.label.text.size = 4,legend.breaks = c(seq(-5,5,5),seq(15,60,15)),
-#                        heat.pal = c("blue", "white","red","red"), heat.pal.values = c(0,0.1,0.2,1), 
-#                        heat.na.col = "white")
-# dev.off()
-# 
-# lowest_locus = "lpg1960"; lowest_locus %in% DE_genes$locus_tag
-# final_locus = match(lowest_locus,rownames(effectors_hm))
-# final_pos = match(final_locus,c(rev(clustering$order.rows)))
-# top_cluster = rownames(effectors_hm)[rev(clustering$order.rows)[1:final_pos]]
-# 
-# viewnocond(filter(DE_genes, locus_tag %in% top_cluster))
-# 
-# for(plat in foldchanges){
-#   print(plat)
-#   val = DE_genes %>% filter(locus_tag %in% top_cluster) %>% 
-#     dplyr::select(!!as.name(plat)) %>% unlist() %>%  mean(.)
-#   print(val)
-# }
-
-# Extract Pgfams names for each cond --------------------------------------------------------------
-# 
-# resdir = file.path(datadir, "Pgfams_gene_names"); if(!dir.exists(resdir)) dir.create(resdir)
-# 
-# for(condition in conditions_list){
-#   print(condition)
-#   
-#   fold_colname = paste0(condition,fold_suffix)
-#   p_colname = paste0(condition,p_suffix)
-#   reg_colname = paste0(condition,"_change")
-#   
-#   
-#   upregd_genes = DE_genes %>% 
-#     filter(!!as.name(reg_colname) == "upregulated") %>% 
-#     filter(!is.na(Pgfams)) %>% 
-#     mutate(Pgfams = as.character(Pgfams)) %>% 
-#     pull(Pgfams)
-#   write(x = upregd_genes, file = file.path(resdir,paste0(condition,"_Pgfams_upreg.txt")),sep = ",")
-#   
-#   downregd_genes = DE_genes %>% 
-#     filter(!!as.name(reg_colname) == "downregulated") %>% 
-#     filter(!is.na(Pgfams)) %>% 
-#     mutate(Pgfams = as.character(Pgfams)) %>% 
-#     pull(Pgfams)
-#   write(x = downregd_genes, file = file.path(resdir,paste0(condition,"_Pgfams_downreg.txt")),sep = ",")
-#   
-# }
-
-
