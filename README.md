@@ -9,7 +9,7 @@ Repository description:
   Contains _L. pneumophila_ KEGG annotations and the names of Dot/Icm secretion system machinery and effector gene names. 
   
   **2. SCRIPTS:**
-  i. BLAST.sh: script to automate BLASTp searches of online nr database from the command line.
-  ii. FYP_DE_functions.R : source script of functions written for this project. 
-  iii. FYP_load_data.R : script to load and process DE data.
+  i. BLAST.sh: script to automate BLASTp searches of online nr database from the command line. \n
+  ii. FYP_DE_functions.R : source script of functions written for this project. \n
+  iii. FYP_load_data.R : script to load and process DE data. \n
   iv. FYP_DE_analysis.R : complete data analysis script for this project. 
