@@ -1,8 +1,8 @@
 # Legionella-Transcriptomics-FYP
 
-The waterborne bacterium _Legionella pneumophila_ is the aetiological agent of Legionnaire’s disease, a severe type of pneumonia. To gain an understanding of its response to environmental stress, the transcriptomic response of _L. pneumophila_ to 9 stress conditions was investigated in an RNA-Sequencing differential expression analysis. 
+The waterborne bacterium _Legionella pneumophila_ is the aetiological agent of Legionnaire’s disease, a severe type of pneumonia. To better the understanding of its response to environmental stress, the transcriptomic response of _L. pneumophila_ to 9 stress conditions was investigated in an RNA-Sequencing differential expression analysis. 
 
-Final year research project at Imperial College London, under supervision by Dr Tiago Costa with data kindly provided by Kemal Avican at Umea University. 
+This analysis was undertaken for my final year undergraduate research project at Imperial College London, under supervision of Dr Tiago Costa with data kindly provided by Kemal Avican at Umea University. 
 
 
 ##################################################################
